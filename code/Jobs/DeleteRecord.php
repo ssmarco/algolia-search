@@ -4,12 +4,11 @@ namespace Marcz\Algolia\Jobs;
 
 use Symbiote\QueuedJobs\Services\AbstractQueuedJob;
 use Symbiote\QueuedJobs\Services\QueuedJob;
-use Marcz\Search\Processor\Exporter;
 use Marcz\Algolia\AlgoliaClient;
 use Exception;
 use SilverStripe\ORM\DataList;
 
-class JsonExport extends AbstractQueuedJob implements QueuedJob
+class DeleteRecord extends AbstractQueuedJob implements QueuedJob
 {
     protected $client;
 
@@ -29,7 +28,7 @@ class JsonExport extends AbstractQueuedJob implements QueuedJob
      */
     public function getTitle()
     {
-        return 'Json document export: "' . $this->className . '" with ID ' . $this->recordID;
+        return 'Record deletion: "' . $this->className . '" with ID ' . $this->recordID;
     }
 
     /**
@@ -61,11 +60,8 @@ class JsonExport extends AbstractQueuedJob implements QueuedJob
             throw new Exception('Record not found.');
         }
 
-        $exporter = Exporter::create();
-        $client   = $this->createClient();
-        $client->update(
-            $exporter->export($record)
-        );
+        $client = $this->createClient();
+        $client->deleteRecord($this->recordID);
 
         $this->isComplete = true;
     }

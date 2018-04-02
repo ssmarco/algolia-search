@@ -8,6 +8,10 @@ class Exporter extends Extension
 {
     public function updateExport(&$data)
     {
-        $data['objectID'] = (int) $data['ID'];
+        //Algolia Free Plan 10KB Limit Per Record
+        $nineKB = 1024 * 9; // 1KB for other columns
+        if (strlen($data['Content']) > $nineKB) {
+            $data['Content'] = substr($data['Content'], 0, $nineKB);
+        }
     }
 }
